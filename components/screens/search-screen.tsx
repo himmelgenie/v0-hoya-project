@@ -3,42 +3,11 @@
 import { useState } from "react";
 import { HoyaChick } from "@/components/hoya-chick";
 import { SpeechBubble } from "@/components/speech-bubble";
-import { Search, Beaker, Pill, Stethoscope, MoreHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 
 interface SearchScreenProps {
   onNavigate: (screen: string, data?: Record<string, string>) => void;
 }
-
-const categories = [
-  {
-    id: "fever",
-    name: "해열제",
-    icon: Beaker,
-    color: "bg-[#E0F7FA]",
-    iconColor: "text-[#00897B]",
-  },
-  {
-    id: "cold",
-    name: "감기약",
-    icon: Pill,
-    color: "bg-[#FFF3E0]",
-    iconColor: "text-[#FB8C00]",
-  },
-  {
-    id: "digestion",
-    name: "소화제",
-    icon: Stethoscope,
-    color: "bg-[#FCE4EC]",
-    iconColor: "text-[#E91E63]",
-  },
-  {
-    id: "other",
-    name: "기타",
-    icon: MoreHorizontal,
-    color: "bg-[var(--surface-container-high)]",
-    iconColor: "text-[var(--foreground)]",
-  },
-];
 
 export function SearchScreen({ onNavigate }: SearchScreenProps) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -47,10 +16,6 @@ export function SearchScreen({ onNavigate }: SearchScreenProps) {
     if (searchQuery.trim()) {
       onNavigate("chat", { medicine: searchQuery });
     }
-  };
-
-  const handleCategoryClick = (category: string) => {
-    onNavigate("chat", { category });
   };
 
   return (
@@ -85,32 +50,9 @@ export function SearchScreen({ onNavigate }: SearchScreenProps) {
       </div>
 
       {/* Example text */}
-      <p className="w-full text-sm text-[var(--muted-foreground)] mb-8 pl-2">
+      <p className="w-full text-sm text-[var(--muted-foreground)] pl-2">
         예: 부루펜, 타이레놀, 챔프 등
       </p>
-
-      {/* Frequently searched */}
-      <div className="w-full">
-        <h3 className="text-lg font-bold text-[var(--foreground)] mb-4">자주 찾는 약</h3>
-        
-        <div className="grid grid-cols-2 gap-4">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => handleCategoryClick(category.name)}
-              className="surface-container-lowest rounded-[1.5rem] p-5 flex items-center gap-3 touch-scale ambient-shadow transition-all hover:scale-[0.98] active:scale-95"
-              aria-label={category.name}
-            >
-              <div className={`w-12 h-12 rounded-full ${category.color} flex items-center justify-center`}>
-                <category.icon className={`w-6 h-6 ${category.iconColor}`} />
-              </div>
-              <span className="text-base font-semibold text-[var(--foreground)]">
-                {category.name}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
