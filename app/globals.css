@@ -1,0 +1,141 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Ho-YA "Reassuring Nest" Color Palette */
+  --background: #FFF9E7;
+  --foreground: #36331c;
+  
+  /* Surface hierarchy */
+  --surface: #FFF9E7;
+  --surface-bright: #FFFDF5;
+  --surface-container-lowest: #FFFFFF;
+  --surface-container-low: #FFF5D6;
+  --surface-container: #FFEFCC;
+  --surface-container-high: #EAE3C1;
+  --surface-container-highest: #EAE3C1;
+  
+  /* Primary - Warm Yellow */
+  --primary: #745c00;
+  --primary-foreground: #FFFFFF;
+  --primary-container: #f9cd3a;
+  --primary-fixed: #FFD23F;
+  --primary-fixed-dim: #E5BC35;
+  
+  /* Secondary - Warm Peach */
+  --secondary: #7a5730;
+  --secondary-foreground: #FFFFFF;
+  --secondary-container: #ffddb6;
+  
+  /* Tertiary - Soft Mint */
+  --tertiary: #006b55;
+  --tertiary-foreground: #FFFFFF;
+  --tertiary-container: #a9f8db;
+  
+  /* Error - Alert but calm */
+  --error: #ba1a1a;
+  --error-foreground: #FFFFFF;
+  --error-container: #fd795a;
+  
+  /* Outline */
+  --outline: #b8b393;
+  --outline-variant: rgba(184, 179, 147, 0.15);
+  
+  /* Card styles */
+  --card: #FFFFFF;
+  --card-foreground: #36331c;
+  
+  /* UI elements */
+  --muted: #EAE3C1;
+  --muted-foreground: #5c5a48;
+  --accent: #f9cd3a;
+  --accent-foreground: #36331c;
+  --border: rgba(184, 179, 147, 0.15);
+  --input: #EAE3C1;
+  --ring: #745c00;
+  
+  /* Radius - soft and rounded */
+  --radius: 1rem;
+  --radius-sm: 0.5rem;
+  --radius-xl: 3rem;
+  
+  /* Additional UI colors */
+  --destructive: #fd795a;
+  --destructive-foreground: #FFFFFF;
+  
+  /* Call buttons */
+  --call-blue: #2B5A8A;
+  --call-red: #A84432;
+}
+
+@theme inline {
+  --font-sans: 'Plus Jakarta Sans', 'Plus Jakarta Sans Fallback', sans-serif;
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: var(--radius-sm);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius-xl);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom utilities for Ho-YA */
+@layer utilities {
+  .surface-container-lowest {
+    background-color: var(--surface-container-lowest);
+  }
+  .surface-container-low {
+    background-color: var(--surface-container-low);
+  }
+  .surface-container {
+    background-color: var(--surface-container);
+  }
+  .surface-container-high {
+    background-color: var(--surface-container-high);
+  }
+  .text-on-surface {
+    color: var(--foreground);
+  }
+  .primary-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
+  }
+  .glassmorphism {
+    background: rgba(255, 249, 231, 0.8);
+    backdrop-filter: blur(20px);
+  }
+  .ambient-shadow {
+    box-shadow: 0px 12px 32px rgba(54, 51, 28, 0.06);
+  }
+  .touch-scale {
+    transition: transform 0.15s ease-out;
+  }
+  .touch-scale:active {
+    transform: scale(0.96);
+  }
+}
