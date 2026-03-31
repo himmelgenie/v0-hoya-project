@@ -33,7 +33,7 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
       <div className="w-full space-y-4">
         {/* Yes option */}
         <button
-          onClick={() => onNavigate("pain-level")}
+          onClick={() => onNavigate("search")}
           className="w-full surface-container-lowest rounded-[2rem] p-6 flex items-center justify-between touch-scale ambient-shadow transition-all hover:scale-[0.98] active:scale-95 bg-[var(--primary-fixed)]"
           aria-label="네, 준비되어 있어요"
         >
