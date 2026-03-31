@@ -1,6 +1,5 @@
 "use client";
 
-import { HoyaChick } from "@/components/hoya-chick";
 import { SpeechBubble } from "@/components/speech-bubble";
 import { Clipboard, Search, Info } from "lucide-react";
 
@@ -19,7 +18,11 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
       </SpeechBubble>
 
       {/* Chick mascot */}
-      <HoyaChick variant="questioning" size="lg" className="mb-8" />
+      <img 
+        src="/images/chick_find.png" 
+        alt="약을 찾는 병아리" 
+        className="w-40 h-40 object-contain mb-8"
+      />
 
       {/* Main question */}
       <h2 className="text-2xl font-bold text-[var(--foreground)] text-center mb-2">
