@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Send, ThumbsUp, Menu } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Send, ThumbsUp, ArrowLeft } from "lucide-react";
 
 interface ChatMessage {
   id: string;
@@ -13,40 +13,73 @@ interface ChatMessage {
 interface ChatScreenProps {
   medicine?: string;
   category?: string;
-  onMenuClick?: () => void;
+  onNavigate?: (screen: string, data?: Record<string, unknown>) => void;
 }
 
-export function ChatScreen({ medicine = "타이레놀", onMenuClick }: ChatScreenProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: "1",
-      sender: "hoya",
-      content: `${medicine}(Pill Name)은 이런 약이야!`,
-      isHighlight: true,
-    },
-    {
-      id: "2",
-      sender: "hoya",
-      content: "갑자기 열이 날 때나 몸이 아플 때 열을 내려주고 통증을 줄여주는 역할을 해. 감기 기운이 있을 때 친구가 되어주는 약이야!",
-    },
-    {
-      id: "3",
-      sender: "user",
-      content: "어떻게 먹어야 해?",
-    },
-    {
-      id: "4",
-      sender: "hoya",
-      content: "식사와 상관없이 먹을 수 있지만, 빈 속보다는 물과 함께 꿀꺽 삼키는 게 좋아. 하루에 정해진 양만큼만 먹기로 약속해요!",
-      isHighlight: true,
-    },
-  ]);
+// LLM API 연결을 위한 함수 - 나중에 실제 API로 교체하세요
+async function callLLM(medicineName: string, userQuestion?: string): Promise<string> {
+  // TODO: 여기에 실제 LLM API 코드를 추가하세요
+  // 예시:
+  // const response = await fetch('/api/chat', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({ medicine: medicineName, question: userQuestion })
+  // });
+  // const data = await response.json();
+  // return data.message;
 
+  // 임시 응답 (API 연결 전)
+  if (userQuestion) {
+    return `'${userQuestion}'에 대한 정보를 불러오려면 LLM API를 연결해주세요! (call_llm 함수에 API 코드를 추가하면 돼요)`;
+  }
+  return `'${medicineName}'에 대한 정보를 불러오려면 LLM API를 연결해주세요! (call_llm 함수에 API 코드를 추가하면 돼요)`;
+}
+
+export function ChatScreen({ medicine = "약 이름", onNavigate }: ChatScreenProps) {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [confirmed, setConfirmed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = () => {
-    if (!inputValue.trim()) return;
+  // 초기 메시지 설정 - 사용자 질문과 호야 응답
+  useEffect(() => {
+    const initChat = async () => {
+      // 사용자의 검색어를 오른쪽 말풍선으로 표시
+      const userMessage: ChatMessage = {
+        id: "1",
+        sender: "user",
+        content: `"${medicine}" 이게 뭐야?`,
+      };
+      setMessages([userMessage]);
+
+      // 호야 응답 로딩
+      setIsLoading(true);
+      try {
+        const response = await callLLM(medicine);
+        const hoyaMessage: ChatMessage = {
+          id: "2",
+          sender: "hoya",
+          content: response,
+        };
+        setMessages(prev => [...prev, hoyaMessage]);
+      } catch (error) {
+        console.error("LLM API 오류:", error);
+        const errorMessage: ChatMessage = {
+          id: "2",
+          sender: "hoya",
+          content: "앗, 정보를 불러오는 데 문제가 생겼어요. 다시 시도해볼까요?",
+        };
+        setMessages(prev => [...prev, errorMessage]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initChat();
+  }, [medicine]);
+
+  const handleSend = async () => {
+    if (!inputValue.trim() || isLoading) return;
 
     const newMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -54,44 +87,68 @@ export function ChatScreen({ medicine = "타이레놀", onMenuClick }: ChatScree
       content: inputValue,
     };
 
-    setMessages([...messages, newMessage]);
+    setMessages(prev => [...prev, newMessage]);
+    const question = inputValue;
     setInputValue("");
 
-    // Simulate Hoya response
-    setTimeout(() => {
-      const response: ChatMessage = {
+    // LLM API 호출
+    setIsLoading(true);
+    try {
+      const response = await callLLM(medicine, question);
+      const hoyaResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         sender: "hoya",
-        content: "좋은 질문이야! 더 자세히 알려줄게요.",
+        content: response,
       };
-      setMessages(prev => [...prev, response]);
-    }, 1000);
+      setMessages(prev => [...prev, hoyaResponse]);
+    } catch (error) {
+      console.error("LLM API 오류:", error);
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        sender: "hoya",
+        content: "앗, 답변을 불러오는 데 문제가 생겼어요.",
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleConfirm = () => {
     setConfirmed(true);
-    setTimeout(() => setConfirmed(false), 2000);
+    setTimeout(() => {
+      if (onNavigate) {
+        onNavigate("search");
+      }
+    }, 500);
+  };
+
+  const handleBack = () => {
+    if (onNavigate) {
+      onNavigate("search");
+    }
   };
 
   return (
     <div className="flex flex-col h-full">
-      {/* Custom header with menu */}
-      <header className="sticky top-0 z-50 glassmorphism">
-        <div className="max-w-md mx-auto flex items-center justify-between h-14 px-4">
-          <button 
-            onClick={onMenuClick}
-            className="p-2 rounded-full touch-scale hover:bg-[var(--surface-container-high)] transition-colors"
-            aria-label="메뉴"
-          >
-            <Menu className="w-5 h-5 text-[var(--foreground)]" />
-          </button>
-          <h1 className="text-xl font-bold text-[var(--foreground)] tracking-tight">Ho-YA</h1>
-          <div className="w-10" />
-        </div>
-      </header>
+      {/* Back to search button */}
+      <div className="px-4 pt-4">
+        <button
+          onClick={handleBack}
+          className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-[var(--surface-container-high)] text-sm font-medium text-[var(--foreground)] touch-scale hover:bg-[var(--surface-container-highest)] transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          다시 검색
+        </button>
+      </div>
+
+      {/* Title */}
+      <div className="text-center py-6">
+        <h1 className="text-2xl font-bold text-[var(--primary)]">Ho-YA가 알려줄게!</h1>
+      </div>
 
       {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 pb-48 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 pb-48 space-y-6">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -107,12 +164,9 @@ export function ChatScreen({ medicine = "타이레놀", onMenuClick }: ChatScree
               </div>
             )}
             
-            <div className={`max-w-[75%] ${message.sender === "user" ? "order-first mr-2" : ""}`}>
+            <div className={`max-w-[75%]`}>
               {message.sender === "hoya" && (
                 <span className="text-xs text-[var(--muted-foreground)] ml-1 mb-1 block">호야</span>
-              )}
-              {message.sender === "user" && (
-                <span className="text-xs text-[var(--muted-foreground)] mr-1 mb-1 block text-right">나</span>
               )}
               
               <div
@@ -122,21 +176,33 @@ export function ChatScreen({ medicine = "타이레놀", onMenuClick }: ChatScree
                     : "bg-[var(--primary-fixed)]"
                 }`}
               >
-                <p 
-                  className="text-base leading-relaxed text-[var(--foreground)]"
-                  dangerouslySetInnerHTML={{
-                    __html: message.isHighlight 
-                      ? message.content.replace(
-                          /(타이레놀\(Pill Name\)|하루에 정해진 양만큼만 먹기로 약속해요!)/g, 
-                          '<span class="text-[var(--primary)] font-semibold">$1</span>'
-                        )
-                      : message.content
-                  }}
-                />
+                <p className="text-base leading-relaxed text-[var(--foreground)]">
+                  {message.content}
+                </p>
               </div>
             </div>
           </div>
         ))}
+
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="flex-shrink-0 mr-2">
+              <img 
+                src="/images/chick_default.png" 
+                alt="호야" 
+                className="w-12 h-12 object-contain animate-bounce"
+              />
+            </div>
+            <div className="surface-container-lowest rounded-3xl px-5 py-4 ambient-shadow">
+              <div className="flex gap-1">
+                <span className="w-2 h-2 bg-[var(--primary)] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="w-2 h-2 bg-[var(--primary)] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                <span className="w-2 h-2 bg-[var(--primary)] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Confirm button */}
@@ -149,29 +215,34 @@ export function ChatScreen({ medicine = "타이레놀", onMenuClick }: ChatScree
               : "bg-[var(--primary)] text-white"
           }`}
         >
-          {confirmed ? "확인 완료!" : "확인했어요!"}
+          {confirmed ? "확인 완료!" : "알겠어요!"}
           <ThumbsUp className="inline-block ml-2 w-5 h-5" />
         </button>
       </div>
 
       {/* Input area */}
       <div className="fixed bottom-0 left-0 right-0 glassmorphism px-4 py-4 pb-8">
-        <div className="max-w-md mx-auto relative">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            placeholder="호야에게 궁금한 걸 더 물어보세요!"
-            className="w-full h-14 pl-5 pr-16 rounded-full bg-[var(--surface-container-high)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-container)] transition-all"
-          />
-          <button
-            onClick={handleSend}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center touch-scale"
-            aria-label="전송"
-          >
-            <Send className="w-5 h-5 text-white" />
-          </button>
+        <div className="max-w-md mx-auto">
+          <p className="text-sm font-semibold text-[var(--foreground)] mb-2 px-1">더 궁금한 게 있어요?</p>
+          <div className="relative">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+              placeholder="호야에게 더 물어보세요!"
+              disabled={isLoading}
+              className="w-full h-14 pl-5 pr-16 rounded-full bg-[var(--surface-container-high)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-container)] transition-all disabled:opacity-50"
+            />
+            <button
+              onClick={handleSend}
+              disabled={isLoading || !inputValue.trim()}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center touch-scale disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="전송"
+            >
+              <Send className="w-5 h-5 text-white" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
