@@ -18,9 +18,9 @@ interface ScreenData {
 }
 
 export default function HoYaApp() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>("home");
+  const [currentScreen, setCurrentScreen] = useState<Screen>("pain-level");
   const [screenData, setScreenData] = useState<ScreenData>({});
-  const [screenHistory, setScreenHistory] = useState<Screen[]>(["home"]);
+  const [screenHistory, setScreenHistory] = useState<Screen[]>(["pain-level"]);
 
   const navigateTo = useCallback((screen: string, data?: Record<string, string>) => {
     const newScreen = screen as Screen;
@@ -41,8 +41,13 @@ export default function HoYaApp() {
   }, [screenHistory]);
 
   const handleTabChange = useCallback((tab: Tab) => {
-    setScreenHistory([tab]);
-    setCurrentScreen(tab);
+    if (tab === "home") {
+      setScreenHistory(["pain-level"]);
+      setCurrentScreen("pain-level");
+    } else {
+      setScreenHistory([tab]);
+      setCurrentScreen(tab);
+    }
     setScreenData({});
   }, []);
 
@@ -51,6 +56,8 @@ export default function HoYaApp() {
     if (currentScreen === "search" || currentScreen === "chat") return "search";
     return "home";
   };
+
+  const isInitialScreen = currentScreen === "pain-level" || currentScreen === "search" || currentScreen === "emergency";
 
   const shouldShowHeader = currentScreen !== "chat";
   const shouldShowNav = currentScreen !== "chat";
@@ -74,7 +81,7 @@ export default function HoYaApp() {
         {shouldShowHeader && (
           <Header 
             title={getHeaderTitle()}
-            showBack={currentScreen !== "home" && currentScreen !== "search" && currentScreen !== "emergency"}
+            showBack={!isInitialScreen}
             onBack={goBack}
           />
         )}

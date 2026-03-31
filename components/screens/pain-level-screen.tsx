@@ -22,7 +22,7 @@ export function PainLevelScreen({ onNavigate }: PainLevelScreenProps) {
       <div className="space-y-5">
         {/* Mild pain */}
         <button
-          onClick={() => onNavigate("search")}
+          onClick={() => onNavigate("home")}
           className="w-full surface-container-lowest rounded-[2rem] p-6 flex items-center justify-between touch-scale ambient-shadow transition-all hover:scale-[0.98] active:scale-95 relative overflow-hidden"
           aria-label="조금 아파요"
         >
