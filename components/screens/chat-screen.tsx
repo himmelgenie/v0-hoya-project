@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { HoyaChick } from "@/components/hoya-chick";
 import { Send, ThumbsUp, Menu } from "lucide-react";
 
 interface ChatMessage {
@@ -100,7 +99,11 @@ export function ChatScreen({ medicine = "타이레놀", onMenuClick }: ChatScree
           >
             {message.sender === "hoya" && (
               <div className="flex-shrink-0 mr-2">
-                <HoyaChick variant="default" size="sm" />
+                <img 
+                  src="/images/chick_default.png" 
+                  alt="호야" 
+                  className="w-12 h-12 object-contain"
+                />
               </div>
             )}
             
