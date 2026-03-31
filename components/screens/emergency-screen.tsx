@@ -1,6 +1,5 @@
 "use client";
 
-import { HoyaChick } from "@/components/hoya-chick";
 import { Phone, Asterisk, ChevronRight, AlertTriangle } from "lucide-react";
 
 export function EmergencyScreen() {
@@ -23,7 +22,11 @@ export function EmergencyScreen() {
 
       {/* Emergency chick */}
       <div className="flex justify-center mb-6">
-        <HoyaChick variant="emergency" size="lg" />
+        <img 
+          src="/images/chick_emer.png" 
+          alt="응급 상황 병아리" 
+          className="w-40 h-40 object-contain"
+        />
       </div>
 
       {/* Message card */}
