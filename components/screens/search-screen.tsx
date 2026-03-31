@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { HoyaChick } from "@/components/hoya-chick";
 import { SpeechBubble } from "@/components/speech-bubble";
 import { Search } from "lucide-react";
 
@@ -28,7 +27,11 @@ export function SearchScreen({ onNavigate }: SearchScreenProps) {
       </SpeechBubble>
 
       {/* Chick mascot */}
-      <HoyaChick variant="waving" size="lg" className="mb-8" />
+      <img 
+        src="/images/chick_type.png" 
+        alt="안내하는 병아리" 
+        className="w-40 h-40 object-contain mb-8"
+      />
 
       {/* Search input */}
       <div className="w-full relative mb-3">
