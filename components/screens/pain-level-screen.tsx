@@ -1,7 +1,6 @@
 "use client";
 
-import { HoyaChick } from "@/components/hoya-chick";
-import { Smile, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 interface PainLevelScreenProps {
   onNavigate: (screen: string, data?: Record<string, string>) => void;
@@ -36,14 +35,13 @@ export function PainLevelScreen({ onNavigate }: PainLevelScreenProps) {
           {/* Background circle */}
           <div className="absolute right-4 top-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-[#E0F7FA] opacity-60" />
           
-          {/* Icon */}
-          <div className="relative z-10">
-            <Smile className="w-10 h-10 text-[#00897B]" />
-          </div>
-          
           {/* Chick illustration */}
-          <div className="absolute right-6 bottom-2 z-10">
-            <HoyaChick variant="happy" size="sm" />
+          <div className="relative z-10">
+            <img 
+              src="/images/chick-mild.png" 
+              alt="조금 아파요" 
+              className="w-28 h-28 object-contain"
+            />
           </div>
         </button>
 
@@ -66,8 +64,12 @@ export function PainLevelScreen({ onNavigate }: PainLevelScreenProps) {
           </div>
           
           {/* Chick illustration */}
-          <div className="absolute right-6 bottom-2 z-10">
-            <HoyaChick variant="crying" size="sm" />
+          <div className="relative z-10">
+            <img 
+              src="/images/chick-crying.png" 
+              alt="많이 아파요" 
+              className="w-28 h-28 object-contain"
+            />
           </div>
         </button>
       </div>
