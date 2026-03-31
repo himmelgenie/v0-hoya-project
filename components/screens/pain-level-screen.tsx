@@ -38,7 +38,7 @@ export function PainLevelScreen({ onNavigate }: PainLevelScreenProps) {
           {/* Chick illustration */}
           <div className="relative z-10">
             <img 
-              src="/images/chick-mild.png" 
+              src="/images/less.png" 
               alt="조금 아파요" 
               className="w-28 h-28 object-contain"
             />
@@ -66,7 +66,7 @@ export function PainLevelScreen({ onNavigate }: PainLevelScreenProps) {
           {/* Chick illustration */}
           <div className="relative z-10">
             <img 
-              src="/images/chick-crying.png" 
+              src="/images/hard.png" 
               alt="많이 아파요" 
               className="w-28 h-28 object-contain"
             />
