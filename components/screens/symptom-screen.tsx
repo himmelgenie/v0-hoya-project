@@ -10,22 +10,22 @@ const symptoms = [
   {
     id: "headache",
     name: "머리가 아파요",
-    image: "/images/symptom_head.jpg",
+    image: "/images/chick_head.png",
   },
   {
     id: "stomachache", 
     name: "배가 아파요",
-    image: "/images/symptom_stomach.jpg",
+    image: "/images/chick_stomach.png",
   },
   {
     id: "bleeding",
     name: "피가 나요",
-    image: "/images/symptom_blood.jpg",
+    image: "/images/chick_blood.png",
   },
   {
     id: "runny-nose",
     name: "콧물이 나요",
-    image: "/images/symptom_nose.jpg",
+    image: "/images/chick_nose.png",
   },
 ];
 
@@ -76,22 +76,22 @@ export function SymptomScreen({ onNavigate }: SymptomScreenProps) {
       {/* Emergency banner */}
       <button
         onClick={handleFindHospital}
-        className="w-full bg-[var(--tertiary-container)] rounded-[1.5rem] p-5 flex items-center justify-between touch-scale transition-all hover:scale-[0.98] active:scale-95"
+        className="w-full bg-[#E8715A] rounded-[1.5rem] p-5 flex items-center justify-between touch-scale transition-all hover:scale-[0.98] active:scale-95"
         aria-label="병원 찾기"
       >
         <div className="text-left">
-          <span className="block text-lg font-bold text-[var(--on-tertiary-container)]">
+          <span className="block text-lg font-bold text-white">
             긴급 상황인가요?
           </span>
-          <span className="block text-sm text-[var(--on-tertiary-container)] opacity-80 mt-1">
+          <span className="block text-sm text-white opacity-90 mt-1">
             바로 근처 응급실을 찾아보세요
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-[var(--on-tertiary-container)] bg-[var(--surface-container-lowest)] px-4 py-2 rounded-full">
+          <span className="text-sm font-medium text-[#E8715A] bg-white px-4 py-2 rounded-full">
             병원 찾기
           </span>
-          <ChevronRight className="w-5 h-5 text-[var(--on-tertiary-container)]" />
+          <ChevronRight className="w-5 h-5 text-white" />
         </div>
       </button>
     </div>
