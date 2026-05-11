@@ -14,7 +14,7 @@ export function PainLevelScreen({ onNavigate }: PainLevelScreenProps) {
         얼마나 아픈가요?
       </h2>
       <p className="text-lg text-[var(--muted-foreground)] mb-10">
-        아이의 현재 상태를 알려주세요.
+        나의 현재 상태를 알려주세요.
       </p>
 
       {/* Pain level cards */}
