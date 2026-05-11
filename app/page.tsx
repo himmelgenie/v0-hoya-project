@@ -8,13 +8,15 @@ import { SearchScreen } from "@/components/screens/search-screen";
 import { PainLevelScreen } from "@/components/screens/pain-level-screen";
 import { EmergencyScreen } from "@/components/screens/emergency-screen";
 import { ChatScreen } from "@/components/screens/chat-screen";
+import { SymptomScreen } from "@/components/screens/symptom-screen";
 
-type Screen = "home" | "search" | "pain-level" | "emergency" | "chat";
+type Screen = "home" | "search" | "pain-level" | "emergency" | "chat" | "symptom";
 type Tab = "home" | "search" | "emergency";
 
 interface ScreenData {
   medicine?: string;
   category?: string;
+  symptom?: string;
 }
 
 export default function HoYaApp() {
@@ -57,7 +59,7 @@ export default function HoYaApp() {
     return "home";
   };
 
-  const isInitialScreen = currentScreen === "pain-level" || currentScreen === "search" || currentScreen === "emergency";
+  const isInitialScreen = currentScreen === "pain-level" || currentScreen === "search" || currentScreen === "emergency" || currentScreen === "symptom";
 
   const shouldShowHeader = currentScreen !== "chat";
   const shouldShowNav = currentScreen !== "chat";
@@ -98,6 +100,10 @@ export default function HoYaApp() {
           
           {currentScreen === "pain-level" && (
             <PainLevelScreen onNavigate={navigateTo} />
+          )}
+          
+          {currentScreen === "symptom" && (
+            <SymptomScreen onNavigate={navigateTo} />
           )}
           
           {currentScreen === "emergency" && (
