@@ -1,13 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { Plus_Jakarta_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
-
-const plusJakartaSans = Plus_Jakarta_Sans({ 
-  subsets: ["latin"],
-  variable: '--font-sans',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: 'Ho-YA - 어린이 상비약 도우미',
@@ -47,7 +40,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${plusJakartaSans.variable} font-sans antialiased`}>
+      <head>
+        <link 
+          rel="stylesheet" 
+          href="https://cdn.jsdelivr.net/gh/fonts-archive/TDTDBomnal/TDTDBomnal.css" 
+          type="text/css"
+        />
+      </head>
+      <body className="font-sans antialiased">
         {children}
         <Analytics />
       </body>
