@@ -67,7 +67,7 @@ export default function HoYaApp() {
   const getHeaderTitle = () => {
     switch (currentScreen) {
       case "home":
-        return "Ho-YA!!";
+        return "Ho-YA";
       case "emergency":
         return "Ho-YA";
       default:
