@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Send, ThumbsUp, ArrowLeft } from "lucide-react";
 
 interface ChatMessage {
@@ -40,13 +40,17 @@ export function ChatScreen({ medicine = "약 이름", onNavigate }: ChatScreenPr
   const [inputValue, setInputValue] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const initializedRef = useRef(false);
 
   // 초기 메시지 설정 - 사용자 질문과 호야 응답
   useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
     const initChat = async () => {
       // 사용자의 검색어를 오른쪽 말풍선으로 표시
       const userMessage: ChatMessage = {
-        id: "1",
+        id: `init-user-${Date.now()}`,
         sender: "user",
         content: `"${medicine}" 이게 뭐야?`,
       };
@@ -57,7 +61,7 @@ export function ChatScreen({ medicine = "약 이름", onNavigate }: ChatScreenPr
       try {
         const response = await callLLM(medicine);
         const hoyaMessage: ChatMessage = {
-          id: "2",
+          id: `init-hoya-${Date.now()}`,
           sender: "hoya",
           content: response,
         };
@@ -65,7 +69,7 @@ export function ChatScreen({ medicine = "약 이름", onNavigate }: ChatScreenPr
       } catch (error) {
         console.error("LLM API 오류:", error);
         const errorMessage: ChatMessage = {
-          id: "2",
+          id: `init-error-${Date.now()}`,
           sender: "hoya",
           content: "앗, 정보를 불러오는 데 문제가 생겼어요. 다시 시도해볼까요?",
         };
