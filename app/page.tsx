@@ -9,6 +9,7 @@ import { PainLevelScreen } from "@/components/screens/pain-level-screen";
 import { EmergencyScreen } from "@/components/screens/emergency-screen";
 import { ChatScreen } from "@/components/screens/chat-screen";
 import { SymptomScreen } from "@/components/screens/symptom-screen";
+import { ProfileModal } from "@/components/profile-modal";
 
 type Screen = "home" | "search" | "pain-level" | "emergency" | "chat" | "symptom";
 type Tab = "home" | "search" | "emergency";
