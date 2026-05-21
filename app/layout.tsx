@@ -41,11 +41,19 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <link 
-          rel="stylesheet" 
-          href="https://cdn.jsdelivr.net/gh/fonts-archive/TDTDBomnal/TDTDBomnal.css" 
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Omyu_pretty.css"
           type="text/css"
         />
+        <style>{`
+          @font-face {
+            font-family: 'omyu_pretty';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Omyu_pretty.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+          }
+        `}</style>
       </head>
       <body className="font-sans antialiased">
         {children}
