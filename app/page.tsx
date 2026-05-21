@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { X, Phone, User } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+import { X, Phone } from "lucide-react";
 import { Header } from "@/components/header";
 import { BottomNav } from "@/components/bottom-nav";
 import { HomeScreen } from "@/components/screens/home-screen";
@@ -10,6 +10,11 @@ import { PainLevelScreen } from "@/components/screens/pain-level-screen";
 import { EmergencyScreen } from "@/components/screens/emergency-screen";
 import { ChatScreen } from "@/components/screens/chat-screen";
 import { SymptomScreen } from "@/components/screens/symptom-screen";
+import {
+  loadConversations,
+  formatRelativeDate,
+  type StoredConversation,
+} from "@/lib/conversation-history";
 
 const mockProfile = {
   name: "도연",
@@ -18,14 +23,6 @@ const mockProfile = {
   parentPhone: "010-1234-5678",
 };
 
-const mockConversations = [
-  { id: "1", medicine: "타이레놀", date: "오늘" },
-  { id: "2", medicine: "부루펜", date: "어제" },
-  { id: "3", medicine: "판콜에이", date: "3일 전" },
-  { id: "4", medicine: "훼스탈골드", date: "5일 전" },
-  { id: "5", medicine: "베나드릴", date: "일주일 전" },
-];
-
 type Screen = "home" | "search" | "pain-level" | "emergency" | "chat" | "symptom";
 type Tab = "home" | "search" | "emergency";
 
@@ -33,6 +30,7 @@ interface ScreenData {
   medicine?: string;
   category?: string;
   symptom?: string;
+  conversationId?: string;
 }
 
 export default function HoYaApp() {
@@ -41,6 +39,13 @@ export default function HoYaApp() {
   const [screenHistory, setScreenHistory] = useState<Screen[]>(["pain-level"]);
   const [showProfile, setShowProfile] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [conversations, setConversations] = useState<StoredConversation[]>([]);
+
+  useEffect(() => {
+    if (showSidebar) {
+      setConversations(loadConversations());
+    }
+  }, [showSidebar]);
 
   const navigateTo = useCallback((screen: string, data?: Record<string, unknown>) => {
     const newScreen = screen as Screen;
@@ -134,6 +139,7 @@ export default function HoYaApp() {
             <ChatScreen
               medicine={screenData.medicine}
               category={screenData.category}
+              conversationId={screenData.conversationId}
               onNavigate={navigateTo}
             />
           )}
@@ -237,21 +243,30 @@ export default function HoYaApp() {
 
               {/* Conversations list */}
               <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
-                {mockConversations.map((conv) => (
-                  <button
-                    key={conv.id}
-                    className="w-full text-left px-4 py-3 rounded-2xl hover:bg-[var(--surface-container-high)] transition-colors group"
-                    onClick={() => {
-                      setShowSidebar(false);
-                      navigateTo("chat", { medicine: conv.medicine });
-                    }}
-                  >
-                    <p className="text-sm font-semibold text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors truncate">
-                      {conv.medicine}
-                    </p>
-                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{conv.date}</p>
-                  </button>
-                ))}
+                {conversations.length === 0 ? (
+                  <p className="text-sm text-[var(--muted-foreground)] text-center mt-8 px-4">
+                    아직 검색한 약이 없어요.<br />
+                    "새 검색"으로 시작해보세요!
+                  </p>
+                ) : (
+                  conversations.map((conv) => (
+                    <button
+                      key={conv.id}
+                      className="w-full text-left px-4 py-3 rounded-2xl hover:bg-[var(--surface-container-high)] transition-colors group"
+                      onClick={() => {
+                        setShowSidebar(false);
+                        navigateTo("chat", { medicine: conv.medicine, conversationId: conv.id });
+                      }}
+                    >
+                      <p className="text-sm font-semibold text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors truncate">
+                        {conv.medicine}
+                      </p>
+                      <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
+                        {formatRelativeDate(conv.updatedAt)}
+                      </p>
+                    </button>
+                  ))
+                )}
               </div>
 
               {/* New chat button */}

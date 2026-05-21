@@ -2,6 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Send, ThumbsUp, ArrowLeft } from "lucide-react";
+import {
+  createConversation,
+  loadConversation,
+  upsertConversation,
+  type StoredConversation,
+  type StoredMessage,
+} from "@/lib/conversation-history";
 
 interface ChatMessage {
   id: string;
@@ -13,6 +20,7 @@ interface ChatMessage {
 interface ChatScreenProps {
   medicine?: string;
   category?: string;
+  conversationId?: string;
   onNavigate?: (screen: string, data?: Record<string, unknown>) => void;
 }
 
@@ -35,28 +43,59 @@ async function callLLM(medicineName: string, userQuestion?: string): Promise<str
   return `'${medicineName}'에 대한 정보를 불러오려면 LLM API를 연결해주세요! (call_llm 함수에 API 코드를 추가하면 돼요)`;
 }
 
-export function ChatScreen({ medicine = "약 이름", onNavigate }: ChatScreenProps) {
+export function ChatScreen({ medicine = "약 이름", conversationId, onNavigate }: ChatScreenProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const initializedRef = useRef(false);
+  const conversationRef = useRef<StoredConversation | null>(null);
 
-  // 초기 메시지 설정 - 사용자 질문과 호야 응답
+  const persistMessages = (next: ChatMessage[]) => {
+    const conv = conversationRef.current;
+    if (!conv) return;
+    const stored: StoredMessage[] = next.map((m) => ({
+      id: m.id,
+      sender: m.sender,
+      content: m.content,
+    }));
+    const updated: StoredConversation = {
+      ...conv,
+      messages: stored,
+      updatedAt: Date.now(),
+    };
+    conversationRef.current = updated;
+    upsertConversation(updated);
+  };
+
+  // 초기 메시지 설정 - 저장된 대화 복원 또는 새 대화 시작
   useEffect(() => {
     if (initializedRef.current) return;
     initializedRef.current = true;
 
+    // 기존 대화 복원
+    if (conversationId) {
+      const existing = loadConversation(conversationId);
+      if (existing && existing.messages.length > 0) {
+        conversationRef.current = existing;
+        setMessages(existing.messages);
+        return;
+      }
+    }
+
+    // 새 대화 시작
+    const conv = createConversation(medicine);
+    conversationRef.current = conv;
+
     const initChat = async () => {
-      // 사용자의 검색어를 오른쪽 말풍선으로 표시
       const userMessage: ChatMessage = {
         id: `init-user-${Date.now()}`,
         sender: "user",
         content: `"${medicine}" 이게 뭐야?`,
       };
       setMessages([userMessage]);
+      persistMessages([userMessage]);
 
-      // 호야 응답 로딩
       setIsLoading(true);
       try {
         const response = await callLLM(medicine);
@@ -65,7 +104,11 @@ export function ChatScreen({ medicine = "약 이름", onNavigate }: ChatScreenPr
           sender: "hoya",
           content: response,
         };
-        setMessages(prev => [...prev, hoyaMessage]);
+        setMessages(prev => {
+          const next = [...prev, hoyaMessage];
+          persistMessages(next);
+          return next;
+        });
       } catch (error) {
         console.error("LLM API 오류:", error);
         const errorMessage: ChatMessage = {
@@ -73,46 +116,61 @@ export function ChatScreen({ medicine = "약 이름", onNavigate }: ChatScreenPr
           sender: "hoya",
           content: "앗, 정보를 불러오는 데 문제가 생겼어요. 다시 시도해볼까요?",
         };
-        setMessages(prev => [...prev, errorMessage]);
+        setMessages(prev => {
+          const next = [...prev, errorMessage];
+          persistMessages(next);
+          return next;
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     initChat();
-  }, [medicine]);
+  }, [medicine, conversationId]);
 
   const handleSend = async () => {
     if (!inputValue.trim() || isLoading) return;
 
     const newMessage: ChatMessage = {
-      id: Date.now().toString(),
+      id: `user-${Date.now()}`,
       sender: "user",
       content: inputValue,
     };
 
-    setMessages(prev => [...prev, newMessage]);
+    setMessages(prev => {
+      const next = [...prev, newMessage];
+      persistMessages(next);
+      return next;
+    });
     const question = inputValue;
     setInputValue("");
 
-    // LLM API 호출
     setIsLoading(true);
     try {
       const response = await callLLM(medicine, question);
       const hoyaResponse: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: `hoya-${Date.now()}`,
         sender: "hoya",
         content: response,
       };
-      setMessages(prev => [...prev, hoyaResponse]);
+      setMessages(prev => {
+        const next = [...prev, hoyaResponse];
+        persistMessages(next);
+        return next;
+      });
     } catch (error) {
       console.error("LLM API 오류:", error);
       const errorMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: `error-${Date.now()}`,
         sender: "hoya",
         content: "앗, 답변을 불러오는 데 문제가 생겼어요.",
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => {
+        const next = [...prev, errorMessage];
+        persistMessages(next);
+        return next;
+      });
     } finally {
       setIsLoading(false);
     }
