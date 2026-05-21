@@ -148,7 +148,7 @@ export function ChatScreen({ medicine = "약 이름", onNavigate }: ChatScreenPr
       </div>
 
       {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto px-4 pb-48 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 pb-56 space-y-6">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -206,7 +206,7 @@ export function ChatScreen({ medicine = "약 이름", onNavigate }: ChatScreenPr
       </div>
 
       {/* Confirm button */}
-      <div className="fixed bottom-36 left-0 right-0 flex justify-center px-6">
+      <div className="fixed bottom-40 left-0 right-0 flex justify-center px-6">
         <button
           onClick={handleConfirm}
           className={`px-12 py-4 rounded-full font-bold text-lg touch-scale transition-all ${
