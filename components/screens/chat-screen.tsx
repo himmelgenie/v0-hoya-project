@@ -148,7 +148,7 @@ export function ChatScreen({ medicine = "약 이름", onNavigate }: ChatScreenPr
       </div>
 
       {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto px-4 pb-56 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 pb-64 space-y-6">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -205,24 +205,24 @@ export function ChatScreen({ medicine = "약 이름", onNavigate }: ChatScreenPr
         )}
       </div>
 
-      {/* Confirm button */}
-      <div className="fixed bottom-40 left-0 right-0 flex justify-center px-6">
-        <button
-          onClick={handleConfirm}
-          className={`px-12 py-4 rounded-full font-bold text-lg touch-scale transition-all ${
-            confirmed
-              ? "bg-[var(--tertiary-container)] text-[var(--tertiary)]"
-              : "bg-[var(--primary)] text-white"
-          }`}
-        >
-          {confirmed ? "확인 완료!" : "알겠어요!"}
-          <ThumbsUp className="inline-block ml-2 w-5 h-5" />
-        </button>
-      </div>
-
-      {/* Input area */}
-      <div className="fixed bottom-0 left-0 right-0 glassmorphism px-4 py-4 pb-8">
+      {/* Bottom fixed area: confirm button + input */}
+      <div className="fixed bottom-0 left-0 right-0 glassmorphism px-4 pt-3 pb-8">
         <div className="max-w-md mx-auto">
+          {/* Confirm button */}
+          <div className="flex justify-center mb-3">
+            <button
+              onClick={handleConfirm}
+              className={`px-12 py-3 rounded-full font-bold text-lg touch-scale transition-all ${
+                confirmed
+                  ? "bg-[var(--tertiary-container)] text-[var(--tertiary)]"
+                  : "bg-[var(--primary)] text-white"
+              }`}
+            >
+              {confirmed ? "확인 완료!" : "알겠어요!"}
+              <ThumbsUp className="inline-block ml-2 w-5 h-5" />
+            </button>
+          </div>
+          {/* Input area */}
           <p className="text-sm font-semibold text-[var(--foreground)] mb-2 px-1">더 궁금한 게 있어요?</p>
           <div className="relative">
             <input
